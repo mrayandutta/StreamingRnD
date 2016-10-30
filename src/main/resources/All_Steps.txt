@@ -1,0 +1,43 @@
+Run Zookeeper
+
+%ZK_HOME%\bin\zkServer.cmd
+
+Run Kafka
+
+%KAFKA_HOME%\bin\windows\kafka-server-start.bat %KAFKA_HOME%\config\server.properties
+
+Topic Creation
+
+%KAFKA_HOME%\bin\windows\kafka-topics --create --zookeeper 127.0.0.1:2181 --replication-factor 1 --partitions 1 --topic event
+
+List the topics
+
+%KAFKA_HOME%/bin/windows/kafka-topics.bat --list --zookeeper 127.0.0.1:2181
+
+Create a Producer
+%KAFKA_HOME%/bin/windows/kafka-console-producer --broker-list 127.0.0.1:9092 --topic event
+
+Create a Consumer
+%KAFKA_HOME%/bin/windows/kafka-console-consumer.bat --zookeeper 127.0.0.1:2181 --topic event -from-beginning
+
+Run Logstash
+%LOGSTASH_HOME%\bin\logstash -f %LOGSTASH_HOME%\conf\file_to_kafka.conf --configtest
+%LOGSTASH_HOME%\bin\logstash -f %LOGSTASH_HOME%\conf\file_to_kafka.conf --debug
+%LOGSTASH_HOME%\bin\logstash -f %LOGSTASH_HOME%\conf\file_to_kafka.conf
+
+Run Elasticsearch 
+ %ES_HOME%\bin\elasticsearch
+Command to check indices
+curl -s 127.0.0.1:9200/_cat/indices?pretty=true
+
+
+Run Storm
+Start Nimbus
+%STORM_HOME%\bin\storm nimbus
+
+Start Supervisor
+%STORM_HOME%\bin\storm supervisor
+
+Start Storm UI
+%STORM_HOME%\bin\storm ui
+Verify that Storm is running by opening http://localhost:8080/ in a browser.
