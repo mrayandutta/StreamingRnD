@@ -1,1 +1,2 @@
 http://rishiverma.com/software/blog/complex-event-processing-using-spark-streaming-and-sparksql/
+https://objectpartners.com/2016/10/13/analyzing-kafka-data-streams-with-spark/
