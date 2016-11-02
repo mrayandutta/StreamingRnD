@@ -14,6 +14,7 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-mllib" % sparkVersion,
   "org.apache.kafka" % "kafka_2.10" % kafkaVersion,
   "org.elasticsearch" % "elasticsearch-spark_2.10" % "2.1.0.Beta3",
+  "org.elasticsearch" % "elasticsearch" % "1.5.2",
   "log4j" % "log4j" % log4jVersion
 
 )
