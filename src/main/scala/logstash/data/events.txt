@@ -1,7 +1,2 @@
-A ON 10
-A ON 11
-A OFF 12
-A ON 14
-A OFF 15
-B ON 10
-C ON 11
+Instance=A|status=ON|time=10
+Instance=A|status=OFF|time=11
