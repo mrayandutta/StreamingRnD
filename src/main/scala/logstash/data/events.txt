@@ -1,2 +1,3 @@
-Instance=A|status=ON|time=10
-Instance=A|status=OFF|time=11
+Instance=A|Status=ON|Time=10
+Instance=A|Status=OFF|Time=11
+Instance=B|Status=OFF|Time=11

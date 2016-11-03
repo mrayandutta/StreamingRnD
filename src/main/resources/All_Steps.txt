@@ -18,6 +18,7 @@ Create a Producer
 %KAFKA_HOME%/bin/windows/kafka-console-producer --broker-list 127.0.0.1:9092 --topic event
 
 Create a Consumer
+%KAFKA_HOME%/bin/windows/kafka-console-consumer.bat --zookeeper 127.0.0.1:2181 --topic event
 %KAFKA_HOME%/bin/windows/kafka-console-consumer.bat --zookeeper 127.0.0.1:2181 --topic event -from-beginning
 
 Run Logstash

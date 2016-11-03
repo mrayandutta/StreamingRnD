@@ -18,7 +18,7 @@ object KafkaProducer
 
   def main(args: Array[String]): Unit =
   {
-    val events = 1;
+    val events = 20;
     val topic = "event";
     val brokers = "localhost:9092"
 
@@ -36,8 +36,11 @@ object KafkaProducer
     for (nEvents <- Range(0, events))
     {
       val runtime = new Date().getTime();
+      val instance = "Instance=M" + nEvents
+      val status = "Status=ON"
+      val time ="Time="+new Date().getTime();
+      val msg = instance + "," + status + ","+time
       val ip = "192.168.2." + rnd.nextInt(255);
-      val msg = runtime + "," + nEvents + ",www.example.com,123" + ip;
       val data = new KeyedMessage[String, String](topic, ip, msg);
       producer.send(data);
     }
