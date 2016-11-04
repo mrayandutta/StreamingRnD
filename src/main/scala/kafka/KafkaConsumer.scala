@@ -1,7 +1,9 @@
 package kafka
 
 import java.util.Properties
-import kafka.consumer.{ConsumerIterator, Consumer, ConsumerConfig, KafkaStream}
+
+import elasticsearch.ESOperation
+import kafka.consumer.{Consumer, ConsumerConfig, ConsumerIterator, KafkaStream}
 import kafka.serializer.StringDecoder
 import kafka.utils.VerifiableProperties
 import org.elasticsearch.action.get.GetResponse
@@ -63,10 +65,12 @@ object KafkaConsumer
 
     val myConsumer = BasicConsumer(zooKeeper, groupId, waitTime)
     myConsumer.subscribe(topic)
-    //Initialize Elasticsearch client
-    val transportClient = new TransportClient();
-    transportClient.addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
-
+    val esOperation = new ESOperation {};
+    val esIndex ="events"
+    val esType ="availability"
+    val id ="1"
+    val client = new TransportClient();
+    client.addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
 
 
     while(true)
@@ -85,10 +89,12 @@ object KafkaConsumer
         if(message.contains(separator))
           {
             val msgparts = message.split(separator)
-            val instanceName = msgparts(0).toString.split("=")(1);
-            val status = msgparts(1).toString.split("=")(1);
-            val time = msgparts(2).toString.split("=")(1);
-            //print(instanceName+msgparts.length)
+            val instanceName = msgparts(0).toString.split("=")(1)
+            val status = msgparts(1).toString.split("=")(1)
+            val time = msgparts(2).toString.split("=")(1)
+
+            esOperation.insertOrUpdateAvailabilityRecord(esIndex,esType,id,instanceName,status,time,client)
+
           }
       }
 

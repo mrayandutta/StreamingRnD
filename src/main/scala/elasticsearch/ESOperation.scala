@@ -20,6 +20,7 @@ import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.delete.DeleteResponse
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
 import org.elasticsearch.action.bulk.BulkResponse
+import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.index.IndexResponse
 import org.elasticsearch.action.update.UpdateResponse
 import org.elasticsearch.search.sort.SortOrder
@@ -73,16 +74,31 @@ trait ESOperation {
 
   }
 
-  def insertAvailabilityRecord(indexName: String,indexType: String, id: String,instance :String,status:String,time:String,client: Client): Any = {
+  def insertOrUpdateAvailabilityRecord(indexName: String,indexType: String, id: String,instance :String,status:String,time:String,client: Client): Any = {
 
-    val builder :XContentBuilder= XContentFactory.jsonBuilder().startObject()
-    builder.field("instance", instance)
-    builder.field("status", status)
-    builder.field("time", time)
-    builder.endObject()
+   if(availabilityRecordExists(indexName,indexType,id,client))
+   {
+     print("Old Record Detected !!")
+   }
+   else
+   {
+     print("New Record Detected !!")
+     val builder :XContentBuilder= XContentFactory.jsonBuilder().startObject()
+     builder.field("instance", instance)
+     builder.field("status", status)
+     builder.field("time", time)
+     builder.endObject()
 
-    client.prepareIndex(indexName,indexType, id)
-      .setSource(builder).execute()
+     client.prepareIndex(indexName,indexType, id).setSource(builder).execute()
+   }
+
+  }
+
+  def availabilityRecordExists(indexName: String,indexType: String, id: String,client: Client): Boolean = {
+
+    val response :GetResponse  = client.prepareGet(indexName,indexType,id).execute().actionGet();
+    print("record present:"+response.isExists)
+    return response.isExists
   }
 
 
