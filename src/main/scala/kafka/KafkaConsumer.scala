@@ -88,6 +88,7 @@ object KafkaConsumer
         if(message.contains(separator))
           {
             val msgparts = message.split(separator)
+            println("message:"+message)
             val instanceName = msgparts(0).toString.split("=")(1)
             val status = msgparts(1).toString.split("=")(1)
             val time = msgparts(2).toString.split("=")(1)
