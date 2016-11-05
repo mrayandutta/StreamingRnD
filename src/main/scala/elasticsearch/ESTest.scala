@@ -13,7 +13,13 @@ object ESTest {
     client.addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
 
     val operation: ESOperation = new ESOperation {}
-    operation.insertOrUpdateAvailabilityRecord("anindex","atype","anid","D","E","F",client)
+    //operation.insertOrUpdateAvailabilityRecord("anindex","atype","anid","D","E","F",client)
+    val esIndex ="anindex"
+    val esType ="atype"
+    val id ="anid"
+
+
+    operation.getAvailabilityRecordField(esIndex,esType,id,client)
   }
 
 }

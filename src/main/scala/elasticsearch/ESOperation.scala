@@ -29,6 +29,9 @@ import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.common.xcontent.{XContentBuilder, XContentFactory}
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 
 trait ESOperation {
 
@@ -99,6 +102,23 @@ trait ESOperation {
     val response :GetResponse  = client.prepareGet(indexName,indexType,id).execute().actionGet();
     print("record present:"+response.isExists)
     return response.isExists
+  }
+
+  def getAvailabilityRecordField(indexName: String,indexType: String, id: String,client: Client): Any = {
+
+    val response :GetResponse  = client.prepareGet(indexName,indexType,id).execute().actionGet()
+    val status = response.getSource.get("status")
+    /*val response :SearchResponse =client.prepareSearch(indexName).setTypes(indexType)
+      .setSearchType(SearchType.QUERY_AND_FETCH)
+      .setFetchSource(new String[]{"field1"}, null)
+      .setQuery(QueryBuilders.termsQuery("field1", "1234"))
+      .execute()
+      .actionGet();
+      //client.prepareGet(indexName,indexType,id).execute().actionGet();
+    print("record present:"+response.isExists)
+    return response.isExists
+    */
+    print("status:"+status)
   }
 
 
