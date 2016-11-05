@@ -104,10 +104,10 @@ trait ESOperation {
     return response.isExists
   }
 
-  def getAvailabilityRecordField(indexName: String,indexType: String, id: String,client: Client): Any = {
+  def getAvailabilityRecordField(indexName: String,indexType: String, id: String,fieldName:String,client: Client): String = {
 
     val response :GetResponse  = client.prepareGet(indexName,indexType,id).execute().actionGet()
-    val status = response.getSource.get("status")
+    val fieldValue:String = response.getSource.get(fieldName).toString
     /*val response :SearchResponse =client.prepareSearch(indexName).setTypes(indexType)
       .setSearchType(SearchType.QUERY_AND_FETCH)
       .setFetchSource(new String[]{"field1"}, null)
@@ -118,7 +118,8 @@ trait ESOperation {
     print("record present:"+response.isExists)
     return response.isExists
     */
-    print("status:"+status)
+    print(fieldName+":"+fieldValue)
+    return fieldValue
   }
 
 

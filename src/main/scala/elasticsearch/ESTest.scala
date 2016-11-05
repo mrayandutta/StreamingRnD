@@ -19,7 +19,7 @@ object ESTest {
     val id ="anid"
 
 
-    operation.getAvailabilityRecordField(esIndex,esType,id,client)
+    operation.getAvailabilityRecordField(esIndex,esType,id,"status",client)
   }
 
 }
