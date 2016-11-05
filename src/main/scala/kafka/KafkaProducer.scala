@@ -18,7 +18,7 @@ object KafkaProducer
 
   def main(args: Array[String]): Unit =
   {
-    val events = 20;
+    val events = 10;
     val topic = "event";
     val brokers = "localhost:9092"
 
@@ -33,12 +33,13 @@ object KafkaProducer
     val config = new ProducerConfig(props)
     val producer = new Producer[String, String](config)
     val t = System.currentTimeMillis()
+    val format = new java.text.SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
     for (nEvents <- Range(0, events))
     {
       val runtime = new Date().getTime();
       val instance = "Instance=M" + nEvents
       val status = "Status=ON"
-      val time ="Time="+new Date().getTime();
+      val time ="Time="+format.format(new Date().getTime())
       val msg = instance + "," + status + ","+time
       val ip = "192.168.2." + rnd.nextInt(255);
       val data = new KeyedMessage[String, String](topic, ip, msg);
