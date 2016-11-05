@@ -31,6 +31,24 @@ Run Elasticsearch
 Command to check indices
 curl -s 127.0.0.1:9200/_cat/indices?pretty=true
 
+Index and Type creation
+
+POST /events
+{
+    "settings" : {
+        "number_of_shards" : 1
+    },
+    "mappings" : {
+        "availability" : {
+            "properties" : {
+                "instance" : { "type" : "string", "index" : "not_analyzed" },
+                "status" : { "type" : "string", "index" : "not_analyzed" },
+                "time" : { "type" : "string", "index" : "not_analyzed" }
+            }
+        }
+    }
+}
+
 
 Run Storm
 Start Nimbus

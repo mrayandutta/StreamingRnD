@@ -68,7 +68,6 @@ object KafkaConsumer
     val esOperation = new ESOperation {};
     val esIndex ="events"
     val esType ="availability"
-    val id ="1"
     val client = new TransportClient();
     client.addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
 

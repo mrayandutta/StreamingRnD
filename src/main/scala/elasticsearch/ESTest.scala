@@ -14,12 +14,15 @@ object ESTest {
 
     val operation: ESOperation = new ESOperation {}
     //operation.insertOrUpdateAvailabilityRecord("anindex","atype","anid","D","E","F",client)
-    val esIndex ="anindex"
-    val esType ="atype"
+    val esIndex ="events"
+    val esType ="availability"
+    val instance ="M1"
+    val status ="ON"
+    val time ="t1"
     val termFieldName ="instance"
     val termFieldValue="D"
     //operation.getAvailabilityRecordField(esIndex,esType,id,"status",client)
-    operation.getAvailabilityRecordField(esIndex,esType,termFieldName,termFieldValue,"status",client)
+    operation.insertOrUpdateAvailabilityRecord(esIndex,esType,instance,status,time,client)
   }
 
 }

@@ -9,7 +9,7 @@ import org.elasticsearch.node.Node._
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 
 import scala.io.Source
-import org.elasticsearch.common.settings.ImmutableSettings
+import org.elasticsearch.common.settings.{ImmutableSettings, Settings}
 import org.elasticsearch.action.update.UpdateRequest
 import org.elasticsearch.common.xcontent.XContentFactory._
 import org.elasticsearch.index.query.{QueryBuilder, QueryBuilders}
@@ -47,55 +47,38 @@ trait ESOperation {
     client
   }
 
-  val mappingBuilder = (jsonBuilder()
-    .startObject()
-    .startObject("events")
-    .startObject("_timestamp")
-    .startObject("_timestamp")
-    .field("enabled", true)
-    .field("store", true)
-    .field("path", "post_date")
-    .endObject()
-    .endObject()
-    .endObject())
 
+  def insertOrUpdateAvailabilityRecord(indexName: String,indexType: String,instance :String,status :String,time :String,client: Client): Any = {
 
-  /**
-    * This is addMappingToIndex method which provides settings and mappings to index and  create it
-    *
-    * @param indexName
-    * @param client
-    * @return
-    */
-  def addMappingToIndex(indexName: String, client: Client): CreateIndexResponse = {
+    val queryBuilder : QueryBuilder= QueryBuilders.matchQuery("instance",instance)
+    println("insertOrUpdateAvailabilityRecord")
+    val indexExists = client.admin().indices().prepareExists(indexName) .execute().actionGet().isExists()
+    val searchResponse :SearchResponse =client.prepareSearch(indexName).setTypes(indexType).setSearchType(SearchType.QUERY_AND_FETCH)
+      .setQuery(queryBuilder)
+      .execute().actionGet()
+    println("searchResponse :"+searchResponse.toString)
+    var fieldValue :Any = None: Option[Any]
+    if(searchResponse.getHits.getHits.size>0)
+    {
+      println("Old record exists for instance "+instance+"")
+      val searchHits = searchResponse.getHits.getHits
+      //println("searchHits(0).sourceAsMap():"+searchHits(0).sourceAsMap())
+      fieldValue = searchHits(0).sourceAsMap().get("status")
+      println("status:"+fieldValue)
+    }
+    else
+    {
+      println("Old record does NOT exists for instance "+instance+",inserting new records")
+      print("New Record Detected !!")
+      val builder :XContentBuilder= XContentFactory.jsonBuilder().startObject()
+      builder.field("instance", instance)
+      builder.field("status", status)
+      builder.field("time", time)
+      builder.endObject()
 
-    val settingsStr = ImmutableSettings.settingsBuilder().put("index.number_of_shards", 5).put("index.number_of_replicas", 1).build()
-    client.admin().indices().prepareCreate(indexName).setSettings(settingsStr)
-      .addMapping(indexName, mappingBuilder).execute()
-      .actionGet()
+      client.prepareIndex(indexName,indexType).setSource(builder).execute()
 
-  }
-
-  def insertOrUpdateAvailabilityRecord(indexName: String,indexType: String,instance :String,status:String,time:String,client: Client): Any = {
-
-   /*if(availabilityRecordExists(indexName,indexType,"","","",client))
-   {
-     print("Old Record Detected !!")
-   }
-   else
-   {
-     print("New Record Detected !!")
-     val builder :XContentBuilder= XContentFactory.jsonBuilder().startObject()
-     builder.field("instance", instance)
-     builder.field("status", status)
-     builder.field("time", time)
-     builder.endObject()
-
-     client.prepareIndex(indexName,indexType).setSource(builder).execute()
-     //client.prepareIndex(indexName,indexType, id).setSource(builder).execute()
-   }
-   */
-
+    }
   }
 
   def availabilityRecordExists(indexName: String,indexType: String, id: String,client: Client): Boolean = {
