@@ -17,8 +17,6 @@ object ESTest {
     val esIndex ="anindex"
     val esType ="atype"
     val id ="anid"
-
-
     operation.getAvailabilityRecordField(esIndex,esType,id,"status",client)
   }
 
