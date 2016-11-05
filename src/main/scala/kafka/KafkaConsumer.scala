@@ -93,7 +93,7 @@ object KafkaConsumer
             val status = msgparts(1).toString.split("=")(1)
             val time = msgparts(2).toString.split("=")(1)
 
-            esOperation.insertOrUpdateAvailabilityRecord(esIndex,esType,id,instanceName,status,time,client)
+            esOperation.insertOrUpdateAvailabilityRecord(esIndex,esType,instanceName,status,time,client)
 
           }
       }

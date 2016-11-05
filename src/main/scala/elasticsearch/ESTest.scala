@@ -16,8 +16,10 @@ object ESTest {
     //operation.insertOrUpdateAvailabilityRecord("anindex","atype","anid","D","E","F",client)
     val esIndex ="anindex"
     val esType ="atype"
-    val id ="anid"
-    operation.getAvailabilityRecordField(esIndex,esType,id,"status",client)
+    val termFieldName ="instance"
+    val termFieldValue="D"
+    //operation.getAvailabilityRecordField(esIndex,esType,id,"status",client)
+    operation.getAvailabilityRecordField(esIndex,esType,termFieldName,termFieldValue,"status",client)
   }
 
 }

@@ -12,7 +12,7 @@ import scala.io.Source
 import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.action.update.UpdateRequest
 import org.elasticsearch.common.xcontent.XContentFactory._
-import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.{QueryBuilder, QueryBuilders}
 import org.elasticsearch.index.query.FilterBuilders._
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
@@ -28,8 +28,7 @@ import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.common.xcontent.{XContentBuilder, XContentFactory}
-
-import org.json.JSONArray;
+import org.json.JSONArray
 import org.json.JSONObject;
 
 
@@ -77,9 +76,9 @@ trait ESOperation {
 
   }
 
-  def insertOrUpdateAvailabilityRecord(indexName: String,indexType: String, id: String,instance :String,status:String,time:String,client: Client): Any = {
+  def insertOrUpdateAvailabilityRecord(indexName: String,indexType: String,instance :String,status:String,time:String,client: Client): Any = {
 
-   if(availabilityRecordExists(indexName,indexType,id,client))
+   /*if(availabilityRecordExists(indexName,indexType,"","","",client))
    {
      print("Old Record Detected !!")
    }
@@ -92,8 +91,10 @@ trait ESOperation {
      builder.field("time", time)
      builder.endObject()
 
-     client.prepareIndex(indexName,indexType, id).setSource(builder).execute()
+     client.prepareIndex(indexName,indexType).setSource(builder).execute()
+     //client.prepareIndex(indexName,indexType, id).setSource(builder).execute()
    }
+   */
 
   }
 
@@ -104,22 +105,25 @@ trait ESOperation {
     return response.isExists
   }
 
-  def getAvailabilityRecordField(indexName: String,indexType: String, id: String,fieldName:String,client: Client): String = {
+  //def getAvailabilityRecordField(indexName: String,indexType: String, termFieldName: String,termFieldValue: String,fieldName:String,client: Client): String = {
+  def getAvailabilityRecordField(indexName: String,indexType: String, termFieldName: String,termFieldValue: String,fieldName:String,client: Client): Any = {
 
-    val response :GetResponse  = client.prepareGet(indexName,indexType,id).execute().actionGet()
-    val fieldValue:String = response.getSource.get(fieldName).toString
-    /*val response :SearchResponse =client.prepareSearch(indexName).setTypes(indexType)
-      .setSearchType(SearchType.QUERY_AND_FETCH)
-      .setFetchSource(new String[]{"field1"}, null)
-      .setQuery(QueryBuilders.termsQuery("field1", "1234"))
-      .execute()
-      .actionGet();
-      //client.prepareGet(indexName,indexType,id).execute().actionGet();
-    print("record present:"+response.isExists)
-    return response.isExists
-    */
-    print(fieldName+":"+fieldValue)
-    return fieldValue
+    //val qb : QueryBuilder= QueryBuilders.boolQuery().must(QueryBuilders.termQuery("time", "anid"))
+    val qb : QueryBuilder= QueryBuilders.matchQuery(termFieldName,termFieldValue)
+
+    //val builder :FilteredQueryBuilder=QueryBuilders.filteredQuery(QueryBuilders.termQuery("test","test"),FilterBuilders.termFilter("test","test"));
+    val searchResponse :SearchResponse =client.prepareSearch(indexName).setTypes(indexType).setSearchType(SearchType.QUERY_AND_FETCH)
+      .setQuery(qb)
+      .execute().actionGet()
+    //println("searchResponse :"+searchResponse.toString)
+    var fieldValue :Any = None: Option[Any]
+    if(searchResponse.getHits.getHits.size>0)
+    {
+      val searchHits = searchResponse.getHits.getHits
+      //println("searchHits(0).sourceAsMap():"+searchHits(0).sourceAsMap())
+      fieldValue = searchHits(0).sourceAsMap().get(fieldName)
+    }
+    println(fieldName+":"+fieldValue)
   }
 
 
