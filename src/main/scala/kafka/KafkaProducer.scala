@@ -38,8 +38,13 @@ object KafkaProducer
     {
       val runtime = new Date().getTime();
       val instance = "Instance=M" + nEvents
-      val status = "Status=ON"
-      val time ="Time="+format.format(new Date().getTime())
+      var status :String ="OFF"
+      if(runtime%2==0)
+      {
+        status = "Status=ON"
+      }
+
+      val time ="Time="+format.format(runtime)
       val msg = instance + "," + status + ","+time
       val ip = "192.168.2." + rnd.nextInt(255);
       val data = new KeyedMessage[String, String](topic, ip, msg);

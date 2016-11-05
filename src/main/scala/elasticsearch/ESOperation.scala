@@ -51,12 +51,11 @@ trait ESOperation {
   def insertOrUpdateAvailabilityRecord(indexName: String,indexType: String,instance :String,status :String,time :String,client: Client): Any = {
 
     val queryBuilder : QueryBuilder= QueryBuilders.matchQuery("instance",instance)
-    println("insertOrUpdateAvailabilityRecord")
     val indexExists = client.admin().indices().prepareExists(indexName) .execute().actionGet().isExists()
     val searchResponse :SearchResponse =client.prepareSearch(indexName).setTypes(indexType).setSearchType(SearchType.QUERY_AND_FETCH)
       .setQuery(queryBuilder)
       .execute().actionGet()
-    println("searchResponse :"+searchResponse.toString)
+    //println("searchResponse :"+searchResponse.toString)
     var fieldValue :Any = None: Option[Any]
     if(searchResponse.getHits.getHits.size>0)
     {
@@ -64,12 +63,11 @@ trait ESOperation {
       val searchHits = searchResponse.getHits.getHits
       //println("searchHits(0).sourceAsMap():"+searchHits(0).sourceAsMap())
       fieldValue = searchHits(0).sourceAsMap().get("status")
-      println("status:"+fieldValue)
+      println("status from Kafka "+status+",status from ES "+fieldValue)
     }
     else
     {
       println("Old record does NOT exists for instance "+instance+",inserting new records")
-      print("New Record Detected !!")
       val builder :XContentBuilder= XContentFactory.jsonBuilder().startObject()
       builder.field("instance", instance)
       builder.field("status", status)
